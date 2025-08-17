@@ -282,7 +282,7 @@ export default function Home() {
             {blog.map((item, i) => (
               <Link
                 href={item.url}
-                className="overflow-hidden rounded-lg p-2"
+                className="shrink-0 overflow-hidden rounded-lg p-2"
                 key={i}
               >
                 <Image
