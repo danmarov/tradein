@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root {
+  --background: #121217;
+  --foreground: #fff;
+  --primary: rgb(58 51 254);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary); /* регистрируем в Tailwind */
+  --font-sans: var(--font-sofia-sans);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sofia-sans), sans-serif;
+}
+
+.container {
+  @apply mx-auto max-w-[1200px];
+}
