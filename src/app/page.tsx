@@ -336,7 +336,7 @@ export default function Home() {
               </h2>
               <p>
                 <span>
-                  Whether you`&apos;re keen on skin trading, searching for the
+                  Whether you&apos;re keen on skin trading, searching for the
                   best CS2 trading bot, or eager to exchange skins, Tradeit is
                   your ultimate hub. Join us and be part of the CS2 (CS:GO)
                   trading revolution! Crowned one of the best CS2 (CSGO) trading
@@ -479,7 +479,7 @@ export default function Home() {
               <p>
                 <span>
                   Familiarize yourself with these concepts and use
-                  Tradeit`&apos;s user-friendly interface to optimize your
+                  Tradeit&apos;s user-friendly interface to optimize your
                   trading experience.
                 </span>
               </p>
@@ -510,7 +510,7 @@ export default function Home() {
               <p>
                 <span>
                   Being one of the best (CS2) CSGO bot trading sites, you can
-                  relax and trust that we`&apos;ve done our part to keep you and
+                  relax and trust that we&apos;ve done our part to keep you and
                   your skins safe!
                 </span>
               </p>
@@ -537,7 +537,7 @@ export default function Home() {
                 skins back, However, using the <strong>Recover</strong> feature
                 comes with a serious price,{" "}
                 <strong>
-                  the user`&apos;s Steam account will be locked from trading for
+                  the user&apos;s Steam account will be locked from trading for
                   30 days
                 </strong>
                 .
@@ -585,7 +585,7 @@ export default function Home() {
                 </span>
               </p>
               <p>
-                <span>Here`&apos;s how to trade in CS2:</span>
+                <span>Here&apos;s how to trade in CS2:</span>
               </p>
               <ol>
                 <li>
@@ -856,7 +856,7 @@ export default function Home() {
                 The Lootbear platform is no longer operating; Tradeit has
                 stepped up to support Lootbear users and suppliers and provide
                 them with excellent trading services and support, including
-                management of Lootbear`&apos;s trading bots and their items.
+                management of Lootbear&apos;s trading bots and their items.
               </p>
               <h3>2. How do I access my Lootbear items?</h3>
               <p>
