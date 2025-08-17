@@ -29,7 +29,7 @@ export default function Header() {
   return (
     <header
       className={cn(
-        "border-primary flex h-[72px] items-center border px-6 transition-all duration-300 ease-in-out",
+        "flex h-[72px] items-center px-6 transition-all duration-300 ease-in-out",
         isHomePage ? "container" : "mx-auto max-w-full",
       )}
     >
@@ -43,7 +43,7 @@ export default function Header() {
             href={item.path}
             className={cn(
               "hover:text-foreground relative grid h-full place-items-center px-4 font-medium transition-colors",
-              pathname === item.path ? "text-foreground" : "text-[#777E88]",
+              pathname === item.path ? "text-foreground" : "text-muted",
             )}
           >
             {item.label}
