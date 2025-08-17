@@ -282,7 +282,7 @@ export default function Home() {
             {blog.map((item, i) => (
               <Link
                 href={item.url}
-                className="shrink-0 overflow-hidden rounded-lg p-2"
+                className="w-fit overflow-hidden rounded-lg p-2"
                 key={i}
               >
                 <Image
@@ -292,7 +292,7 @@ export default function Home() {
                   alt=""
                   src={item.image}
                 />
-                <div className="mt-3">
+                <div className="mt-3 max-w-[279px]">
                   <p className="text-muted text-sm font-medium">{item.title}</p>
 
                   <p className="text-base font-bold">{item.description}</p>
