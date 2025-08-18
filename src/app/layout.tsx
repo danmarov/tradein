@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Sofia_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import MainLayout from "@/shared/layouts/main-layout";
+import Providers from "@/providers";
 
 const sofiaSans = Sofia_Sans({
   variable: "--font-sofia-sans",
@@ -28,7 +29,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${sofiaSans.variable} font-sofia antialiased`}>
-        <MainLayout>{children}</MainLayout>
+        <Providers>
+          <MainLayout>{children}</MainLayout>
+        </Providers>
       </body>
     </html>
   );

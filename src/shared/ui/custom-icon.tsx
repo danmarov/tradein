@@ -190,7 +190,7 @@ interface IconProps {
   className?: string;
 }
 
-export default function Awesome({
+function Awesome({
   name,
   type = "fas",
   gradient = false,
@@ -216,9 +216,27 @@ export default function Awesome({
     />
   );
 }
+
+const ArrowLeft = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={15}
+    height={15}
+    viewBox="0 0 15 15"
+    fill="none"
+  >
+    <path
+      d="M10.438 0.5H4.56903C2.01976 0.5 0.5 2.019 0.5 4.567V10.426C0.5 12.981 2.01976 14.5 4.56903 14.5H10.4309C12.9802 14.5 14.5 12.981 14.5 10.433V4.567C14.507 2.019 12.9872 0.5 10.438 0.5ZM12.0768 7.871L9.07227 10.874C8.96722 10.979 8.83415 11.028 8.70109 11.028C8.56802 11.028 8.43495 10.979 8.3299 10.874C8.1268 10.671 8.1268 10.335 8.3299 10.132L10.438 8.025H3.3014C3.01425 8.025 2.77613 7.787 2.77613 7.5C2.77613 7.213 3.01425 6.975 3.3014 6.975H10.438L8.3299 4.868C8.1268 4.665 8.1268 4.329 8.3299 4.126C8.533 3.923 8.86917 3.923 9.07227 4.126L12.0768 7.129C12.1748 7.227 12.2308 7.36 12.2308 7.5C12.2308 7.64 12.1748 7.773 12.0768 7.871Z"
+      fill="white"
+      style={{ fill: "white", fillOpacity: 1 }}
+    />
+  </svg>
+);
+
 export const CustomIcon = {
   Logo,
   Steam,
   TrustPilot,
   Awesome,
+  ArrowLeft,
 };
