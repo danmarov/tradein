@@ -32,7 +32,7 @@ export interface UserBrief {
   avatar: string;
 }
 
-export interface UserSearchParams extends PaginationParams {}
+export type UserSearchParams = PaginationParams;
 
 export interface UserSearchResponse {
   users: User[];

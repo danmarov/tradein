@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -85,15 +85,21 @@ export function Modal({
     setMounted(true);
   }, []);
 
-  const handleOpenChange = (newOpen: boolean) => {
-    if (open === undefined) {
-      setInternalIsOpen(newOpen);
-    }
-    onOpenChange?.(newOpen);
-  };
+  const handleOpenChange = useCallback(
+    (newOpen: boolean) => {
+      if (open === undefined) {
+        setInternalIsOpen(newOpen);
+      }
+      onOpenChange?.(newOpen);
+    },
+    [open, onOpenChange],
+  );
 
   const openModal = () => handleOpenChange(true);
-  const closeModal = () => handleOpenChange(false);
+  const closeModal = useCallback(
+    () => handleOpenChange(false),
+    [handleOpenChange],
+  );
 
   // Обработка ESC
   useEffect(() => {
@@ -110,7 +116,7 @@ export function Modal({
     }
 
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [isOpen, closeOnEscape]);
+  }, [isOpen, closeOnEscape, closeModal]);
 
   // Управление фокусом и прокруткой
   useEffect(() => {
