@@ -1,0 +1,1231 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Документация - Торговая площадка скинами</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.3/swagger-ui.css"
+    />
+    <style>
+      html {
+        box-sizing: border-box;
+        overflow: -moz-scrollbars-vertical;
+        overflow-y: scroll;
+      }
+      *,
+      *:before,
+      *:after {
+        box-sizing: inherit;
+      }
+      body {
+        margin: 0;
+        background: #fafafa;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.3/swagger-ui-bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.10.3/swagger-ui-standalone-preset.js"></script>
+    <script>
+      const spec = {
+        openapi: "3.0.3",
+        info: {
+          title: "API Торговой площадки скинами",
+          description:
+            "API для торговой площадки игровыми скинами с поддержкой Steam OAuth",
+          version: "1.0.0",
+          contact: {
+            name: "API Support",
+          },
+        },
+        responses: {
+          400: {
+            description: "Некорректный запрос",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "INVALID_REQUEST",
+                    message: "Некорректные данные запроса",
+                    details: {
+                      field: "steam_id",
+                      issue: "required",
+                    },
+                  },
+                },
+              },
+            },
+          },
+          401: {
+            description: "Требуется аутентификация",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "AUTH_REQUIRED",
+                    message: "Требуется аутентификация",
+                  },
+                },
+              },
+            },
+          },
+          403: {
+            description: "Недостаточно прав",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "INSUFFICIENT_BALANCE",
+                    message: "Недостаточно средств на балансе",
+                  },
+                },
+              },
+            },
+          },
+          404: {
+            description: "Ресурс не найден",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "NOT_FOUND",
+                    message: "Запрашиваемый ресурс не найден",
+                  },
+                },
+              },
+            },
+          },
+          429: {
+            description: "Превышен лимит запросов",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "RATE_LIMIT_EXCEEDED",
+                    message: "Превышен лимит запросов. Попробуйте позже",
+                  },
+                },
+              },
+            },
+          },
+          500: {
+            description: "Внутренняя ошибка сервера",
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/Error" },
+                example: {
+                  error: {
+                    code: "INTERNAL_ERROR",
+                    message: "Внутренняя ошибка сервера",
+                  },
+                },
+              },
+            },
+          },
+        },
+        servers: [
+          {
+            url: "http://localhost:3000/api/v1",
+            description: "Development server",
+          },
+        ],
+        components: {
+          securitySchemes: {
+            bearerAuth: {
+              type: "http",
+              scheme: "bearer",
+              bearerFormat: "JWT",
+            },
+          },
+          schemas: {
+            User: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                steam_id: { type: "string" },
+                username: { type: "string" },
+                avatar: { type: "string", format: "uri" },
+                balance: { type: "number" },
+                online: { type: "boolean" },
+                last_seen: { type: "string", format: "date-time" },
+                created_at: { type: "string", format: "date-time" },
+              },
+            },
+            Item: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                steam_item_id: { type: "string" },
+                name: { type: "string" },
+                type: { type: "string" },
+                rarity: { type: "string" },
+                image: { type: "string", format: "uri" },
+                price: { type: "number" },
+                market_hash_name: { type: "string" },
+                exterior: { type: "string" },
+                stattrak: { type: "boolean" },
+                tradeable: { type: "boolean" },
+                marketable: { type: "boolean" },
+              },
+            },
+            Trade: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                sender_id: { type: "string" },
+                recipient_id: { type: "string" },
+                status: {
+                  type: "string",
+                  enum: [
+                    "pending",
+                    "accepted",
+                    "declined",
+                    "cancelled",
+                    "expired",
+                  ],
+                },
+                items_to_give: {
+                  type: "array",
+                  items: { $ref: "#/components/schemas/Item" },
+                },
+                items_to_receive: {
+                  type: "array",
+                  items: { $ref: "#/components/schemas/Item" },
+                },
+                total_value_give: { type: "number" },
+                total_value_receive: { type: "number" },
+                message: { type: "string" },
+                created_at: { type: "string", format: "date-time" },
+                updated_at: { type: "string", format: "date-time" },
+                expires_at: { type: "string", format: "date-time" },
+              },
+            },
+            Transaction: {
+              type: "object",
+              properties: {
+                id: { type: "string" },
+                type: {
+                  type: "string",
+                  enum: ["deposit", "withdraw", "trade"],
+                },
+                amount: { type: "number" },
+                currency: { type: "string" },
+                status: {
+                  type: "string",
+                  enum: ["pending", "processing", "completed", "failed"],
+                },
+                description: { type: "string" },
+                created_at: { type: "string", format: "date-time" },
+              },
+            },
+            Error: {
+              type: "object",
+              properties: {
+                error: {
+                  type: "object",
+                  properties: {
+                    code: { type: "string" },
+                    message: { type: "string" },
+                    details: { type: "object" },
+                  },
+                },
+              },
+            },
+            Pagination: {
+              type: "object",
+              properties: {
+                page: { type: "number" },
+                limit: { type: "number" },
+                total: { type: "number" },
+                pages: { type: "number" },
+              },
+            },
+          },
+        },
+        paths: {
+          "/auth/login": {
+            post: {
+              tags: ["Аутентификация"],
+              summary: "Вход через Steam OAuth",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        steam_id: { type: "string" },
+                        steam_ticket: { type: "string" },
+                      },
+                      required: ["steam_id", "steam_ticket"],
+                    },
+                  },
+                },
+              },
+              responses: {
+                200: {
+                  description: "Успешная аутентификация",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          access_token: { type: "string" },
+                          refresh_token: { type: "string" },
+                          user: { $ref: "#/components/schemas/User" },
+                        },
+                      },
+                      example: {
+                        access_token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                        refresh_token:
+                          "def502004f8b7c7e3f1a2b3c4d5e6f7g8h9i0j1k...",
+                        user: {
+                          id: "user_12345",
+                          steam_id: "76561198123456789",
+                          username: "PlayerOne",
+                          avatar:
+                            "https://avatars.steamstatic.com/123_full.jpg",
+                          balance: 150.75,
+                          created_at: "2024-01-15T10:30:00Z",
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/auth/refresh": {
+            post: {
+              tags: ["Аутентификация"],
+              summary: "Обновление токена",
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        refresh_token: { type: "string" },
+                      },
+                      required: ["refresh_token"],
+                    },
+                  },
+                },
+              },
+              responses: {
+                200: {
+                  description: "Токен обновлен",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          access_token: { type: "string" },
+                          refresh_token: { type: "string" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/users/search": {
+            get: {
+              tags: ["Пользователи"],
+              summary: "Поиск пользователей по никнейму",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "q",
+                  in: "query",
+                  required: true,
+                  schema: { type: "string" },
+                  description: "Поисковый запрос",
+                },
+                {
+                  name: "limit",
+                  in: "query",
+                  schema: { type: "number", default: 20 },
+                  description: "Количество результатов",
+                },
+                {
+                  name: "offset",
+                  in: "query",
+                  schema: { type: "number", default: 0 },
+                  description: "Смещение",
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Список найденных пользователей",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          users: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/User" },
+                          },
+                          total: { type: "number" },
+                        },
+                      },
+                      example: {
+                        users: [
+                          {
+                            id: "user_123",
+                            steam_id: "76561198123456789",
+                            username: "PlayerOne",
+                            avatar:
+                              "https://avatars.steamstatic.com/123_full.jpg",
+                            online: true,
+                            last_seen: "2024-08-19T12:30:00Z",
+                          },
+                          {
+                            id: "user_456",
+                            steam_id: "76561198987654321",
+                            username: "PlayerTwo",
+                            avatar:
+                              "https://avatars.steamstatic.com/456_full.jpg",
+                            online: false,
+                            last_seen: "2024-08-18T20:15:00Z",
+                          },
+                        ],
+                        total: 2,
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/users/{user_id}": {
+            get: {
+              tags: ["Пользователи"],
+              summary: "Получение профиля пользователя",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "user_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Профиль пользователя",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        allOf: [
+                          { $ref: "#/components/schemas/User" },
+                          {
+                            type: "object",
+                            properties: {
+                              stats: {
+                                type: "object",
+                                properties: {
+                                  total_trades: { type: "number" },
+                                  successful_trades: { type: "number" },
+                                  items_count: { type: "number" },
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/users/me": {
+            get: {
+              tags: ["Пользователи"],
+              summary: "Получение своего профиля",
+              security: [{ bearerAuth: [] }],
+              responses: {
+                200: {
+                  description: "Мой профиль",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        allOf: [
+                          { $ref: "#/components/schemas/User" },
+                          {
+                            type: "object",
+                            properties: {
+                              email: { type: "string", format: "email" },
+                              settings: {
+                                type: "object",
+                                properties: {
+                                  notifications: { type: "boolean" },
+                                  trade_confirmations: { type: "boolean" },
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/inventory/{user_id}": {
+            get: {
+              tags: ["Инвентарь"],
+              summary: "Получение инвентаря пользователя",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "user_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+                {
+                  name: "page",
+                  in: "query",
+                  schema: { type: "number", default: 1 },
+                },
+                {
+                  name: "limit",
+                  in: "query",
+                  schema: { type: "number", default: 50 },
+                },
+                { name: "search", in: "query", schema: { type: "string" } },
+                { name: "rarity", in: "query", schema: { type: "string" } },
+                { name: "type", in: "query", schema: { type: "string" } },
+                {
+                  name: "sort",
+                  in: "query",
+                  schema: {
+                    type: "string",
+                    enum: ["price_asc", "price_desc", "name_asc", "name_desc"],
+                  },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Инвентарь пользователя",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          items: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/Item" },
+                          },
+                          pagination: {
+                            $ref: "#/components/schemas/Pagination",
+                          },
+                        },
+                      },
+                      example: {
+                        items: [
+                          {
+                            id: "item_123",
+                            steam_item_id: "steam_987654321",
+                            name: "AK-47 | Redline",
+                            type: "Rifle",
+                            rarity: "Classified",
+                            image:
+                              "https://steamcommunity-a.akamaihd.net/economy/image/123",
+                            price: 45.99,
+                            market_hash_name: "AK-47 | Redline (Field-Tested)",
+                            exterior: "Field-Tested",
+                            stattrak: false,
+                            tradeable: true,
+                            marketable: true,
+                          },
+                          {
+                            id: "item_456",
+                            steam_item_id: "steam_123456789",
+                            name: "AWP | Dragon Lore",
+                            type: "Sniper Rifle",
+                            rarity: "Covert",
+                            image:
+                              "https://steamcommunity-a.akamaihd.net/economy/image/456",
+                            price: 4500.0,
+                            market_hash_name:
+                              "AWP | Dragon Lore (Minimal Wear)",
+                            exterior: "Minimal Wear",
+                            stattrak: false,
+                            tradeable: true,
+                            marketable: true,
+                          },
+                        ],
+                        pagination: {
+                          page: 1,
+                          limit: 50,
+                          total: 127,
+                          pages: 3,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/inventory/me": {
+            get: {
+              tags: ["Инвентарь"],
+              summary: "Получение своего инвентаря",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "page",
+                  in: "query",
+                  schema: { type: "number", default: 1 },
+                },
+                {
+                  name: "limit",
+                  in: "query",
+                  schema: { type: "number", default: 50 },
+                },
+                { name: "search", in: "query", schema: { type: "string" } },
+                { name: "rarity", in: "query", schema: { type: "string" } },
+                { name: "type", in: "query", schema: { type: "string" } },
+                {
+                  name: "sort",
+                  in: "query",
+                  schema: {
+                    type: "string",
+                    enum: ["price_asc", "price_desc", "name_asc", "name_desc"],
+                  },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Мой инвентарь",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          items: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/Item" },
+                          },
+                          pagination: {
+                            $ref: "#/components/schemas/Pagination",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/trades": {
+            post: {
+              tags: ["Торговля"],
+              summary: "Создание торгового оффера",
+              security: [{ bearerAuth: [] }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        recipient_id: { type: "string" },
+                        items_to_give: {
+                          type: "array",
+                          items: { type: "string" },
+                        },
+                        items_to_receive: {
+                          type: "array",
+                          items: { type: "string" },
+                        },
+                        message: { type: "string" },
+                      },
+                      required: [
+                        "recipient_id",
+                        "items_to_give",
+                        "items_to_receive",
+                      ],
+                    },
+                  },
+                },
+              },
+              responses: {
+                201: {
+                  description: "Торговый оффер создан",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/Trade" },
+                      example: {
+                        id: "trade_789",
+                        sender_id: "user_123",
+                        recipient_id: "user_456",
+                        status: "pending",
+                        items_to_give: [
+                          {
+                            id: "item_123",
+                            name: "AK-47 | Redline",
+                            image:
+                              "https://steamcommunity-a.akamaihd.net/economy/image/123",
+                            price: 45.99,
+                          },
+                        ],
+                        items_to_receive: [
+                          {
+                            id: "item_789",
+                            name: "M4A4 | Asiimov",
+                            image:
+                              "https://steamcommunity-a.akamaihd.net/economy/image/789",
+                            price: 48.5,
+                          },
+                        ],
+                        total_value_give: 45.99,
+                        total_value_receive: 48.5,
+                        message: "Хочу обменяться скинами",
+                        created_at: "2024-08-19T14:30:00Z",
+                        expires_at: "2024-08-26T14:30:00Z",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+            get: {
+              tags: ["Торговля"],
+              summary: "Получение истории торгов",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "type",
+                  in: "query",
+                  schema: { type: "string", enum: ["sent", "received", "all"] },
+                },
+                {
+                  name: "status",
+                  in: "query",
+                  schema: {
+                    type: "string",
+                    enum: [
+                      "pending",
+                      "accepted",
+                      "declined",
+                      "cancelled",
+                      "expired",
+                    ],
+                  },
+                },
+                {
+                  name: "page",
+                  in: "query",
+                  schema: { type: "number", default: 1 },
+                },
+                {
+                  name: "limit",
+                  in: "query",
+                  schema: { type: "number", default: 20 },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "История торгов",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          trades: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/Trade" },
+                          },
+                          pagination: {
+                            $ref: "#/components/schemas/Pagination",
+                          },
+                        },
+                      },
+                      example: {
+                        trades: [
+                          {
+                            id: "trade_789",
+                            sender: {
+                              id: "user_123",
+                              username: "PlayerOne",
+                              avatar:
+                                "https://avatars.steamstatic.com/123_full.jpg",
+                            },
+                            recipient: {
+                              id: "user_456",
+                              username: "PlayerTwo",
+                              avatar:
+                                "https://avatars.steamstatic.com/456_full.jpg",
+                            },
+                            status: "completed",
+                            items_to_give: [
+                              {
+                                id: "item_123",
+                                name: "AK-47 | Redline",
+                                image:
+                                  "https://steamcommunity-a.akamaihd.net/economy/image/123",
+                                price: 45.99,
+                              },
+                            ],
+                            items_to_receive: [
+                              {
+                                id: "item_789",
+                                name: "M4A4 | Asiimov",
+                                image:
+                                  "https://steamcommunity-a.akamaihd.net/economy/image/789",
+                                price: 48.5,
+                              },
+                            ],
+                            total_value_give: 45.99,
+                            total_value_receive: 48.5,
+                            message: "Хочу обменяться скинами",
+                            created_at: "2024-08-19T14:30:00Z",
+                            updated_at: "2024-08-19T15:45:00Z",
+                          },
+                        ],
+                        pagination: {
+                          page: 1,
+                          limit: 20,
+                          total: 45,
+                          pages: 3,
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/trades/{trade_id}": {
+            get: {
+              tags: ["Торговля"],
+              summary: "Получение деталей оффера",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "trade_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Детали торгового оффера",
+                  content: {
+                    "application/json": {
+                      schema: { $ref: "#/components/schemas/Trade" },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/trades/{trade_id}/accept": {
+            post: {
+              tags: ["Торговля"],
+              summary: "Принятие оффера",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "trade_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Оффер принят",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          success: { type: "boolean" },
+                          message: { type: "string" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/trades/{trade_id}/decline": {
+            post: {
+              tags: ["Торговля"],
+              summary: "Отклонение оффера",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "trade_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+              ],
+              requestBody: {
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        reason: { type: "string" },
+                      },
+                    },
+                  },
+                },
+              },
+              responses: {
+                200: {
+                  description: "Оффер отклонен",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          success: { type: "boolean" },
+                          message: { type: "string" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/trades/{trade_id}/cancel": {
+            post: {
+              tags: ["Торговля"],
+              summary: "Отмена оффера (только отправитель)",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "trade_id",
+                  in: "path",
+                  required: true,
+                  schema: { type: "string" },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "Оффер отменен",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          success: { type: "boolean" },
+                          message: { type: "string" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/balance": {
+            get: {
+              tags: ["Финансы"],
+              summary: "Получение баланса",
+              security: [{ bearerAuth: [] }],
+              responses: {
+                200: {
+                  description: "Текущий баланс",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          balance: { type: "number" },
+                          currency: { type: "string" },
+                        },
+                      },
+                      example: {
+                        balance: 1250.75,
+                        currency: "USD",
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/deposit": {
+            post: {
+              tags: ["Финансы"],
+              summary: "Создание депозита",
+              security: [{ bearerAuth: [] }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        amount: { type: "number" },
+                        payment_method: {
+                          type: "string",
+                          enum: ["card", "crypto"],
+                        },
+                        currency: { type: "string" },
+                      },
+                      required: ["amount", "payment_method", "currency"],
+                    },
+                  },
+                },
+              },
+              responses: {
+                201: {
+                  description: "Депозит создан",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          id: { type: "string" },
+                          amount: { type: "number" },
+                          currency: { type: "string" },
+                          payment_url: { type: "string", format: "uri" },
+                          status: {
+                            type: "string",
+                            enum: ["pending", "completed", "failed"],
+                          },
+                          created_at: { type: "string", format: "date-time" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/withdraw": {
+            post: {
+              tags: ["Финансы"],
+              summary: "Создание вывода",
+              security: [{ bearerAuth: [] }],
+              requestBody: {
+                required: true,
+                content: {
+                  "application/json": {
+                    schema: {
+                      type: "object",
+                      properties: {
+                        amount: { type: "number" },
+                        payment_method: { type: "string" },
+                        payment_details: {
+                          type: "object",
+                          properties: {
+                            card_number: { type: "string" },
+                            crypto_address: { type: "string" },
+                          },
+                        },
+                      },
+                      required: ["amount", "payment_method", "payment_details"],
+                    },
+                  },
+                },
+              },
+              responses: {
+                201: {
+                  description: "Запрос на вывод создан",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          id: { type: "string" },
+                          amount: { type: "number" },
+                          currency: { type: "string" },
+                          status: {
+                            type: "string",
+                            enum: [
+                              "pending",
+                              "processing",
+                              "completed",
+                              "failed",
+                            ],
+                          },
+                          created_at: { type: "string", format: "date-time" },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/transactions": {
+            get: {
+              tags: ["Финансы"],
+              summary: "История транзакций",
+              security: [{ bearerAuth: [] }],
+              parameters: [
+                {
+                  name: "type",
+                  in: "query",
+                  schema: {
+                    type: "string",
+                    enum: ["deposit", "withdraw", "trade"],
+                  },
+                },
+                {
+                  name: "page",
+                  in: "query",
+                  schema: { type: "number", default: 1 },
+                },
+                {
+                  name: "limit",
+                  in: "query",
+                  schema: { type: "number", default: 20 },
+                },
+              ],
+              responses: {
+                200: {
+                  description: "История транзакций",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          transactions: {
+                            type: "array",
+                            items: { $ref: "#/components/schemas/Transaction" },
+                          },
+                          pagination: {
+                            $ref: "#/components/schemas/Pagination",
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+          "/stats": {
+            get: {
+              tags: ["Статистика"],
+              summary: "Получение статистики платформы",
+              responses: {
+                200: {
+                  description: "Статистика платформы",
+                  content: {
+                    "application/json": {
+                      schema: {
+                        type: "object",
+                        properties: {
+                          total_users: { type: "number" },
+                          total_trades: { type: "number" },
+                          total_volume: { type: "number" },
+                          online_users: { type: "number" },
+                          recent_trades: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                id: { type: "string" },
+                                sender: { type: "string" },
+                                recipient: { type: "string" },
+                                value: { type: "number" },
+                                created_at: {
+                                  type: "string",
+                                  format: "date-time",
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      example: {
+                        total_users: 15847,
+                        total_trades: 89234,
+                        total_volume: 2847392.5,
+                        online_users: 542,
+                        recent_trades: [
+                          {
+                            id: "trade_890",
+                            sender: "PlayerOne",
+                            recipient: "PlayerTwo",
+                            value: 156.75,
+                            created_at: "2024-08-19T14:45:00Z",
+                          },
+                          {
+                            id: "trade_891",
+                            sender: "SkinTrader",
+                            recipient: "ProGamer",
+                            value: 89.99,
+                            created_at: "2024-08-19T14:42:00Z",
+                          },
+                        ],
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        tags: [
+          {
+            name: "Аутентификация",
+            description: "Операции аутентификации и авторизации",
+          },
+          {
+            name: "Пользователи",
+            description: "Управление профилями пользователей",
+          },
+          { name: "Инвентарь", description: "Просмотр инвентарей игроков" },
+          { name: "Торговля", description: "Торговые операции и офферы" },
+          { name: "Финансы", description: "Финансовые операции и баланс" },
+          {
+            name: "Статистика",
+            description: "Статистические данные платформы",
+          },
+        ],
+      };
+
+      window.onload = function () {
+        SwaggerUIBundle({
+          url: "",
+          spec: spec,
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
+          plugins: [SwaggerUIBundle.plugins.DownloadUrl],
+          layout: "StandaloneLayout",
+          tryItOutEnabled: true,
+          supportedSubmitMethods: ["get", "post", "put", "delete", "patch"],
+          docExpansion: "list",
+          operationsSorter: "alpha",
+          tagsSorter: "alpha",
+          filter: true,
+          showExtensions: true,
+          showCommonExtensions: true,
+        });
+      };
+    </script>
+  </body>
+</html>
