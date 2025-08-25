@@ -28,6 +28,10 @@ export interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   error: ApiError | null;
+  needsCookieUpdate?: {
+    access_token: string;
+    refresh_token: string;
+  };
 }
 
 export interface StoredTokens {
@@ -61,7 +65,9 @@ export type AuthErrorCode =
   | "TOKEN_EXPIRED"
   | "STEAM_AUTH_FAILED"
   | "NETWORK_ERROR"
-  | "UNKNOWN_ERROR";
+  | "UNKNOWN_ERROR"
+  | "LOGIN_ERROR"
+  | "LOGOUT_ERROR";
 
 export interface AuthError extends ApiError {
   code: AuthErrorCode;

@@ -2,6 +2,8 @@
 import { Table, TableColumn, TableEmptyState } from "@/shared/ui/table";
 import { Exchange, ExchangeStatus } from "@/entities/exchange";
 import { StatusBadge } from "@/shared/ui/status-bedge";
+import { Avatar } from "@/shared/ui/avatar";
+import { formatPrice } from "@/shared/lib/utils";
 
 interface ExchangeHistoryProps {
   exchanges: Exchange[];
@@ -18,11 +20,9 @@ export function ExchangeHistory({
       key: "nickname",
       title: "Nickname",
       width: "w-[35%]",
-      render: (nickname: string) => (
+      render: (nickname: string, record: Exchange) => (
         <div className="flex items-center gap-3 pr-4">
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-600 text-sm font-medium text-white">
-            {nickname.charAt(0)}
-          </div>
+          <Avatar className="size-8" src={record.avatar} name={nickname} />
           <span className="truncate font-medium text-white">{nickname}</span>
         </div>
       ),
@@ -40,20 +40,19 @@ export function ExchangeHistory({
       title: "Exchange amount",
       width: "w-[25%]",
       render: (amount: number) => (
-        <span className="font-semibold text-white">
-          $
-          {amount.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-          })}
-        </span>
+        <span className="font-semibold text-white">{formatPrice(amount)}</span>
       ),
     },
     {
       key: "status",
       title: "Status",
       width: "w-[20%]",
-      render: (status: ExchangeStatus) => <StatusBadge status={status} />,
+      render: (status: ExchangeStatus) => (
+        <span className="space-x-3">
+          <StatusBadge status={status} />
+          {/* <StatusBadge status={status} /> */}
+        </span>
+      ),
     },
   ];
 

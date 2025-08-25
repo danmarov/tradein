@@ -1,9 +1,15 @@
-export type ExchangeStatus = "Pending" | "Accepted" | "Rejected";
+export type ExchangeStatus =
+  | "pending"
+  | "accepted"
+  | "declined"
+  | "cancelled"
+  | "expired";
 
 export interface Exchange {
-  id: number;
+  id: string;
   nickname: string;
   date: string;
   amount: number;
   status: ExchangeStatus;
+  avatar: string;
 }

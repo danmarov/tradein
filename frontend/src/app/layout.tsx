@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Sofia_Sans } from "next/font/google";
 import "@/styles/globals.css";
 import MainLayout from "@/shared/layouts/main-layout";
-import Providers from "@/providers";
+import Providers from "@/shared/lib/providers";
+import { getServerAuth } from "@/features/auth/server";
+import { AuthProvider } from "@/features/auth/client";
 
 const sofiaSans = Sofia_Sans({
   variable: "--font-sofia-sans",
@@ -15,11 +17,14 @@ export const metadata: Metadata = {
   description: "Steam items trading platform",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Получаем auth данные на сервере
+  const authData = await getServerAuth();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -30,7 +35,9 @@ export default function RootLayout({
       </head>
       <body className={`${sofiaSans.variable} font-sofia antialiased`}>
         <Providers>
-          <MainLayout>{children}</MainLayout>
+          <AuthProvider initialAuthData={authData}>
+            <MainLayout>{children}</MainLayout>
+          </AuthProvider>
         </Providers>
       </body>
     </html>

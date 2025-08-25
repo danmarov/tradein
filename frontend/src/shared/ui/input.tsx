@@ -57,8 +57,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             "relative flex items-center overflow-hidden rounded-md border bg-white/5 transition-colors",
             hasError
               ? "border-red-400 focus-within:border-red-400"
-              : "border-white/10 focus-within:border-blue-500",
-            disabled && "cursor-not-allowed bg-white/2 opacity-50",
+              : "focus-within:border-primary border-white/10",
+            disabled && "bg-white/2 cursor-not-allowed opacity-50",
             wrapperClassName,
           )}
         >

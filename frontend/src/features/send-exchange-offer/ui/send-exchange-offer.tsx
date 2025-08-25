@@ -5,10 +5,11 @@ import { CustomIcon } from "@/shared/ui/custom-icon";
 import { Input } from "@/shared/ui/input";
 import { Modal, ModalFooter, useModal } from "@/shared/ui/modal";
 import { CircleAlert, Loader2, Search, User } from "lucide-react";
-import { useUserSearch } from "../hooks/use-user-search";
+import { useUserSearch } from "@/features/search-users";
 import Image from "next/image";
 import { cn } from "@sglara/cn";
 import { useRouter } from "next/navigation";
+import { Avatar } from "@/shared/ui/avatar";
 
 interface SendExchangeOfferProps {
   className?: string;
@@ -30,9 +31,7 @@ export function SendExchangeOffer({ className }: SendExchangeOfferProps) {
     if (!selectedUser) return;
 
     // Логика отправки предложения
-    console.log("Sending offer to user:", selectedUser);
-    // alert("Sending offer to user:" + selectedUser);
-    router.push("/trade/12345");
+    router.push(`/trade/${selectedUser}`);
     modal.closeModal();
 
     // Сброс состояния
@@ -115,25 +114,24 @@ export function SendExchangeOffer({ className }: SendExchangeOfferProps) {
                 )}
               >
                 <div className="flex items-center space-x-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-600">
-                    {user.avatar ? (
-                      <Image
-                        src={user.avatar}
-                        alt={user.nickname}
-                        className="h-8 w-8 rounded-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-xs font-medium text-white">
-                        {user.nickname.charAt(0).toUpperCase()}
-                      </span>
+                  <div className="relative size-8">
+                    <Avatar
+                      className="size-8"
+                      src={user.avatar}
+                      name={user.username}
+                    />
+                    {user.online && (
+                      <span className="absolute right-0 size-2 -translate-y-1/3 rounded-full bg-green-500" />
                     )}
                   </div>
+
                   <div>
                     <div className="text-sm font-medium text-white">
-                      {user.nickname}
+                      {user.username}
                     </div>
                     <div className="text-xs text-gray-400">
-                      {user.exchangeCount} exchanges
+                      50 exchanges
+                      {/* {user.exchangeCount} */}
                     </div>
                   </div>
                 </div>

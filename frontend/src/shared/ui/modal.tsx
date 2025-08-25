@@ -19,7 +19,9 @@ interface ModalProps {
   size?: "sm" | "md" | "lg" | "xl" | "full";
   onOpenChange?: (open: boolean) => void;
   defaultOpen?: boolean;
-  open?: boolean; // Контролируемое состояние
+  open?: boolean;
+  titleClassName?: string;
+  delay?: number; // Новый проп для задержки в миллисекундах
 }
 
 const sizeClasses = {
@@ -70,12 +72,15 @@ export function Modal({
   size = "md",
   onOpenChange,
   defaultOpen = false,
+  titleClassName = "",
   open,
+  delay = 0, // По умолчанию без задержки
 }: ModalProps) {
-  const [internalIsOpen, setInternalIsOpen] = useState(defaultOpen);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const modalRef = useRef<HTMLDivElement>(null);
   const previousActiveElement = useRef<HTMLElement | null>(null);
+  const delayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Используем контролируемое состояние если передан open, иначе внутреннее
   const isOpen = open !== undefined ? open : internalIsOpen;
@@ -83,7 +88,23 @@ export function Modal({
   // Проверяем, что компонент смонтирован (для SSR)
   useEffect(() => {
     setMounted(true);
-  }, []);
+
+    // Если defaultOpen=true и есть delay, применяем задержку
+    if (defaultOpen && delay > 0 && open === undefined) {
+      delayTimeoutRef.current = setTimeout(() => {
+        setInternalIsOpen(true);
+        onOpenChange?.(true);
+      }, delay);
+    } else if (defaultOpen && open === undefined) {
+      setInternalIsOpen(true);
+    }
+
+    return () => {
+      if (delayTimeoutRef.current) {
+        clearTimeout(delayTimeoutRef.current);
+      }
+    };
+  }, [defaultOpen, delay, onOpenChange, open]);
 
   const handleOpenChange = useCallback(
     (newOpen: boolean) => {
@@ -95,11 +116,29 @@ export function Modal({
     [open, onOpenChange],
   );
 
-  const openModal = () => handleOpenChange(true);
-  const closeModal = useCallback(
-    () => handleOpenChange(false),
-    [handleOpenChange],
-  );
+  const openModal = useCallback(() => {
+    // Очищаем предыдущий timeout если есть
+    if (delayTimeoutRef.current) {
+      clearTimeout(delayTimeoutRef.current);
+    }
+
+    if (delay > 0) {
+      delayTimeoutRef.current = setTimeout(() => {
+        handleOpenChange(true);
+      }, delay);
+    } else {
+      handleOpenChange(true);
+    }
+  }, [handleOpenChange, delay]);
+
+  const closeModal = useCallback(() => {
+    // Очищаем timeout при закрытии
+    if (delayTimeoutRef.current) {
+      clearTimeout(delayTimeoutRef.current);
+      delayTimeoutRef.current = null;
+    }
+    handleOpenChange(false);
+  }, [handleOpenChange]);
 
   // Обработка ESC
   useEffect(() => {
@@ -121,46 +160,33 @@ export function Modal({
   // Управление фокусом и прокруткой
   useEffect(() => {
     if (isOpen) {
-      // Сохраняем текущий активный элемент
       previousActiveElement.current = document.activeElement as HTMLElement;
-
-      // Блокируем прокрутку body
       document.body.style.overflow = "hidden";
 
-      // Фокус на модалку
       setTimeout(() => {
         if (modalRef.current) {
           modalRef.current.focus();
         }
-      }, 300); // Длительность анимации
+      }, 300);
     } else {
-      // Восстанавливаем прокрутку
       document.body.style.overflow = "unset";
 
-      // Возвращаем фокус на предыдущий элемент
       if (previousActiveElement.current) {
         previousActiveElement.current.focus();
       }
     }
 
-    // Cleanup при размонтировании
     return () => {
       document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
-  // Обработка клика по backdrop
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (closeOnBackdrop) {
       closeModal();
     }
   };
 
-  const handleModalClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  // Trap focus внутри модалки
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Tab" && modalRef.current) {
       const focusableElements = modalRef.current.querySelectorAll(
@@ -185,10 +211,8 @@ export function Modal({
     }
   };
 
-  // Клонируем trigger и добавляем обработчик клика
   const triggerWithHandler = React.cloneElement(trigger, {
     onClick: (e: React.MouseEvent) => {
-      // Вызываем оригинальный onClick если есть
       const originalOnClick = trigger.props.onClick as
         | ((e: React.MouseEvent) => void)
         | undefined;
@@ -197,7 +221,6 @@ export function Modal({
     },
   });
 
-  // Не рендерим портал на сервере
   if (!mounted) {
     return triggerWithHandler;
   }
@@ -220,10 +243,8 @@ export function Modal({
               transition={{ duration: 0.2 }}
               onClick={handleBackdropClick}
             >
-              {/* Backdrop */}
               <div className="absolute inset-0 bg-black/50" />
 
-              {/* Modal Content */}
               <motion.div
                 ref={modalRef}
                 className={cn(
@@ -236,9 +257,9 @@ export function Modal({
                 animate="visible"
                 exit="exit"
                 transition={{
-                  type: "tween", // Вместо spring
+                  type: "tween",
                   duration: 0.3,
-                  ease: [0.4, 0.0, 0.2, 1], // easeOut
+                  ease: [0.4, 0.0, 0.2, 1],
                 }}
                 onClick={(e) => e.stopPropagation()}
                 onKeyDown={handleKeyDown}
@@ -247,9 +268,13 @@ export function Modal({
                 aria-modal="true"
                 aria-labelledby={title ? "modal-title" : undefined}
               >
-                {/* Header */}
                 {(title || showCloseButton) && (
-                  <div className="flex items-center justify-between p-6 pb-4">
+                  <div
+                    className={cn(
+                      "flex items-center justify-between p-6 pb-4",
+                      titleClassName,
+                    )}
+                  >
                     {title && (
                       <h2
                         id="modal-title"
@@ -270,7 +295,6 @@ export function Modal({
                   </div>
                 )}
 
-                {/* Content */}
                 <div className={cn("p-6", title && "pt-0", contentClassName)}>
                   {children}
                 </div>
@@ -317,18 +341,70 @@ export const ModalFooter = ({
   </div>
 );
 
-export function useModal() {
-  const [isOpen, setIsOpen] = useState(false);
+interface UseModalOptions {
+  defaultOpen?: boolean;
+  delay?: number; // Добавляем delay в хук
+}
 
-  const openModal = () => setIsOpen(true);
-  const closeModal = () => setIsOpen(false);
-  const toggleModal = () => setIsOpen((prev) => !prev);
+export function useModal(options: UseModalOptions = {}) {
+  const { defaultOpen = false, delay = 0 } = options;
+  const [isOpen, setIsOpen] = useState(false);
+  const delayTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const openModal = useCallback(() => {
+    if (delayTimeoutRef.current) {
+      clearTimeout(delayTimeoutRef.current);
+    }
+
+    if (delay > 0) {
+      delayTimeoutRef.current = setTimeout(() => {
+        setIsOpen(true);
+      }, delay);
+    } else {
+      setIsOpen(true);
+    }
+  }, [delay]);
+
+  const closeModal = useCallback(() => {
+    if (delayTimeoutRef.current) {
+      clearTimeout(delayTimeoutRef.current);
+      delayTimeoutRef.current = null;
+    }
+    setIsOpen(false);
+  }, []);
+
+  const toggleModal = useCallback(() => {
+    if (isOpen) {
+      closeModal();
+    } else {
+      openModal();
+    }
+  }, [isOpen, openModal, closeModal]);
+
+  // Применяем defaultOpen с задержкой при монтировании
+  useEffect(() => {
+    if (defaultOpen) {
+      openModal();
+    }
+
+    return () => {
+      if (delayTimeoutRef.current) {
+        clearTimeout(delayTimeoutRef.current);
+      }
+    };
+  }, [defaultOpen, openModal]);
 
   return {
     isOpen,
     openModal,
     closeModal,
     toggleModal,
-    setIsOpen,
+    setIsOpen: (open: boolean) => {
+      if (open) {
+        openModal();
+      } else {
+        closeModal();
+      }
+    },
   };
 }

@@ -14,9 +14,7 @@ export default function MainLayout({
   return (
     <>
       <Header />
-      <main className={cn("min-h-[calc(100svh_-_70px)]", className)}>
-        {children}
-      </main>
+      <main className={cn("", className)}>{children}</main>
       <Footer />
     </>
   );

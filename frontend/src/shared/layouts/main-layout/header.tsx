@@ -7,6 +7,8 @@ import Link from "next/link";
 import { usePageConfig } from "./hooks/use-page-config";
 import { usePathname } from "next/navigation";
 import React from "react";
+import { LoginButton } from "@/features/auth/components/login-button";
+import { useAuth } from "@/features/auth";
 
 const navigation = [
   { label: "Trade", path: "/trade" },
@@ -27,6 +29,7 @@ export default function Header({
 }: HeaderProps = {}) {
   const pathname = usePathname();
   const pageConfig = usePageConfig();
+  const { user, isAuthenticated, logout, login } = useAuth();
 
   const shouldUseContainer = forceContainer ?? pageConfig.useContainer;
   const headerVariant = variant ?? pageConfig.headerVariant;
@@ -73,10 +76,28 @@ export default function Header({
           );
         })}
       </nav>
-
-      <Button icon={<CustomIcon.Steam />} className="ml-auto">
-        Log in with steam
-      </Button>
+      {/* {isAuthenticated} */}
+      {isAuthenticated ? (
+        <>
+          <span className="ml-auto">Привет, {user?.username}!</span>
+          <Button className="ml-4" onClick={logout}>
+            Logout
+          </Button>
+        </>
+      ) : (
+        <Button
+          icon={<CustomIcon.Steam />}
+          className="ml-auto"
+          onClick={() =>
+            login({
+              steam_id: "76561198000054364",
+              steam_ticket: "test_ticket",
+            })
+          }
+        >
+          Log in with steam
+        </Button>
+      )}
     </header>
   );
 }
