@@ -174,13 +174,14 @@ app.use('*', (req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 4000;
 
-app.listen(PORT, () => {
-  console.log(`🚀 Fish TradeIt API server running on port ${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`🏥 Health Check: http://localhost:${PORT}/health`);
-  console.log(`🔗 API Base URL: http://localhost:${PORT}/api/v1`);
-});
+// для локальной разработки
+if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT || 4000;
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
 
+// для Vercel
 module.exports = app;
