@@ -1,18 +1,27 @@
 "use client";
 import { useBalance } from "@/features/balance/client";
+import TopUpBalance from "@/features/balance/components/top-up-balance";
 import { formatPrice } from "@/shared/lib/utils";
 import { CustomIcon } from "@/shared/ui/custom-icon";
+import { useModal } from "@/shared/ui/modal";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Plus } from "lucide-react";
 import React from "react";
+import CountUp from "react-countup";
 export default function BalanceDisplay() {
   const { balance, invalidateBalance } = useBalance();
+  const modal = useModal();
 
+  const handleBalanceClick = () => {
+    invalidateBalance();
+    modal.toggleModal();
+  };
   return (
     <>
+      <TopUpBalance open={modal.isOpen} onOpenChange={modal.setIsOpen} />
       <Tooltip>
         <TooltipTrigger
-          onClick={invalidateBalance}
+          onClick={handleBalanceClick}
           className="ml-auto mr-4 flex cursor-pointer items-center rounded-sm bg-[#1c1d26] px-2 py-1"
         >
           <span>
@@ -24,6 +33,14 @@ export default function BalanceDisplay() {
               {formatPrice(balance?.balance || 0, {
                 hideCurrencySymbol: true,
               })}
+              {/* <CountUp
+                end={balance?.balance || 0}
+                duration={0.8}
+                decimals={2}
+                decimal="."
+                separator=","
+                preserveValue 
+              /> */}
             </span>
             <span className="text-muted text-xs font-semibold">
               Trade balance

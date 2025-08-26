@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  ReactNode,
+} from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
@@ -9,7 +15,7 @@ import { cn } from "@/shared/lib/utils";
 interface ModalProps {
   children: React.ReactNode;
   trigger: React.ReactElement<any>;
-  title?: string;
+  title?: string | ReactNode;
   showCloseButton?: boolean;
   closeOnBackdrop?: boolean;
   closeOnEscape?: boolean;
@@ -27,7 +33,7 @@ interface ModalProps {
 const sizeClasses = {
   sm: "max-w-md",
   md: "max-w-lg",
-  lg: "max-w-2xl",
+  lg: "max-w-xl",
   xl: "max-w-4xl",
   full: "max-w-[95vw] max-h-[95vh]",
 };
@@ -295,9 +301,7 @@ export function Modal({
                   </div>
                 )}
 
-                <div className={cn("p-6", title && "pt-0", contentClassName)}>
-                  {children}
-                </div>
+                <div className={cn("p-6", contentClassName)}>{children}</div>
               </motion.div>
             </motion.div>
           )}
