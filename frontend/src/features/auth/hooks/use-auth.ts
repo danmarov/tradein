@@ -45,11 +45,12 @@ export function useAuthStatus() {
  * Содержит только действия, без состояния
  */
 export function useAuthActions() {
-  const { login, logout, clearError } = useAuthContext();
+  const { login, logout, clearError, loginWithSteam } = useAuthContext();
 
   return {
     login,
     logout,
+    loginWithSteam,
     clearError,
   };
 }

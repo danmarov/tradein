@@ -8,7 +8,7 @@ import React from "react";
 import { useAuth } from "../client";
 
 export default function LoginModal() {
-  const { login } = useAuth();
+  const { loginWithSteam } = useAuth();
   const modal = useModal({
     defaultOpen: true,
     delay: 250,
@@ -67,16 +67,7 @@ export default function LoginModal() {
               </span>
             </p>
           </Link>
-          <Button
-            onClick={() =>
-              login({
-                steam_id: "9439249832",
-                steam_ticket: "9439249832",
-              })
-            }
-          >
-            Sign in with Steam
-          </Button>
+          <Button onClick={() => loginWithSteam()}>Sign in with Steam</Button>
         </div>
       </>
     </Modal>

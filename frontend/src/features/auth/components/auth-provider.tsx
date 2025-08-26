@@ -21,6 +21,7 @@ interface AuthContextType {
   refetchUser: () => Promise<void>;
   invalidateAuth: () => Promise<void>;
   clearError: () => void;
+  loginWithSteam: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -175,6 +176,10 @@ export function AuthProvider({ children, initialAuthData }: AuthProviderProps) {
 
     logout: async () => {
       await logoutMutation.mutateAsync();
+    },
+    loginWithSteam: () => {
+      // router.push("/api/auth/steam/login");
+      window.location.href = "/api/auth/steam/login";
     },
 
     refetchUser: async () => {

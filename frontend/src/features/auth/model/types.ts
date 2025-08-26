@@ -87,3 +87,21 @@ export interface AuthEventData {
   timestamp: string;
   metadata?: Record<string, unknown>;
 }
+
+export interface SteamLoginRequest {
+  steamId: string;
+  username: string;
+  avatar: string;
+  profileUrl: string;
+}
+
+export interface SteamUser {
+  steamid: string;
+  username: string;
+  avatar: {
+    small: string;
+    medium: string;
+    large: string;
+  };
+  profile: string;
+}

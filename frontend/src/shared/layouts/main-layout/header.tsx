@@ -29,7 +29,7 @@ export default function Header({
 }: HeaderProps = {}) {
   const pathname = usePathname();
   const pageConfig = usePageConfig();
-  const { user, isAuthenticated, logout, login } = useAuth();
+  const { user, isAuthenticated, logout, loginWithSteam } = useAuth();
 
   const shouldUseContainer = forceContainer ?? pageConfig.useContainer;
   const headerVariant = variant ?? pageConfig.headerVariant;
@@ -88,12 +88,7 @@ export default function Header({
         <Button
           icon={<CustomIcon.Steam />}
           className="ml-auto"
-          onClick={() =>
-            login({
-              steam_id: "76561198000054364",
-              steam_ticket: "test_ticket",
-            })
-          }
+          onClick={() => loginWithSteam()}
         >
           Log in with steam
         </Button>
