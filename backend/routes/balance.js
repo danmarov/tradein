@@ -50,23 +50,24 @@ const authenticateToken = (req, res, next) => {
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/', authenticateToken, async (req, res) => {
-  try {
-    // Mock данные баланса
-    const balance = {
-      balance: 2500.75,
-      currency: 'USD'
-    };
+ try {
+   const randomBalance = Math.floor(Math.random() * 10000 * 100) / 100;
+   
+   const balance = {
+     balance: randomBalance,
+     currency: 'USD'
+   };
 
-    res.json(balance);
-  } catch (error) {
-    console.error('Get balance error:', error);
-    res.status(500).json({
-      error: {
-        code: 'INTERNAL_ERROR',
-        message: 'Internal server error'
-      }
-    });
-  }
+   res.json(balance);
+ } catch (error) {
+   console.error('Get balance error:', error);
+   res.status(500).json({
+     error: {
+       code: 'INTERNAL_ERROR',
+       message: 'Internal server error'
+     }
+   });
+ }
 });
 
 /**

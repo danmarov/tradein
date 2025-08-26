@@ -5,6 +5,8 @@ import MainLayout from "@/shared/layouts/main-layout";
 import Providers from "@/shared/lib/providers";
 import { getServerAuth } from "@/features/auth/server";
 import { AuthProvider } from "@/features/auth/client";
+import { getServerBalance } from "@/features/balance/server";
+import { BalanceProvider } from "@/features/balance/client";
 
 const sofiaSans = Sofia_Sans({
   variable: "--font-sofia-sans",
@@ -24,7 +26,7 @@ export default async function RootLayout({
 }>) {
   // Получаем auth данные на сервере
   const authData = await getServerAuth();
-
+  const balanceData = await getServerBalance();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -36,7 +38,9 @@ export default async function RootLayout({
       <body className={`${sofiaSans.variable} font-sofia antialiased`}>
         <Providers>
           <AuthProvider initialAuthData={authData}>
-            <MainLayout>{children}</MainLayout>
+            <BalanceProvider initialBalance={balanceData}>
+              <MainLayout>{children}</MainLayout>
+            </BalanceProvider>
           </AuthProvider>
         </Providers>
       </body>
