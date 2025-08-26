@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import React from "react";
 import { LoginButton } from "@/features/auth/components/login-button";
 import { useAuth } from "@/features/auth";
+import { AccountControls } from "@/widgets/account-controls";
 
 const navigation = [
   { label: "Trade", path: "/trade" },
@@ -76,14 +77,9 @@ export default function Header({
           );
         })}
       </nav>
-      {/* {isAuthenticated} */}
+
       {isAuthenticated ? (
-        <>
-          <span className="ml-auto">Привет, {user?.username}!</span>
-          <Button className="ml-4" onClick={logout}>
-            Logout
-          </Button>
-        </>
+        <AccountControls />
       ) : (
         <Button
           icon={<CustomIcon.Steam />}

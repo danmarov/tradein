@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       avatar: steamUser.avatar.large,
       profileUrl: steamUser._json.profileurl,
     };
-
+    console.log(steamLoginData);
     const response = await fetch(`${BACKEND_URL}/auth/steam-openid`, {
       method: "POST",
       headers: {

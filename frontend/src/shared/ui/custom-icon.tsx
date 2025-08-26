@@ -308,6 +308,104 @@ const Reload = () => (
   </svg>
 );
 
+const Swap = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={24}
+    height={24}
+    viewBox="0 0 24 24"
+    fill="none"
+  >
+    <rect
+      x="0.375"
+      y="0.375"
+      width="23.25"
+      height="23.25"
+      rx="11.625"
+      fill="url(#paint0_linear_13386_13907)"
+    />
+    <rect
+      x="0.375"
+      y="0.375"
+      width="23.25"
+      height="23.25"
+      rx="11.625"
+      stroke="url(#paint1_linear_13386_13907)"
+      strokeWidth="0.75"
+    />
+    <g clipPath="url(#clip0_13386_13907)">
+      <g filter="url(#filter0_d_13386_13907)">
+        <path
+          d="M18.6668 9.71428L15.7039 6.66666V8.95237H10.5187V10.4762H15.7039V12.7619M8.29646 11.2381L5.3335 14.2857L8.29646 17.3333V15.0476H13.4816V13.5238H8.29646V11.2381Z"
+          fill="white"
+        />
+      </g>
+    </g>
+    <defs>
+      <filter
+        id="filter0_d_13386_13907"
+        x="5.3335"
+        y="6.66666"
+        width="15.3335"
+        height="12.6667"
+        filterUnits="userSpaceOnUse"
+        colorInterpolationFilters="sRGB"
+      >
+        <feFlood floodOpacity={0} result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dx={1} dy={1} />
+        <feGaussianBlur stdDeviation="0.5" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix
+          type="matrix"
+          values="0 0 0 0 0.0666667 0 0 0 0 0.0666667 0 0 0 0 0.0666667 0 0 0 0.24 0"
+        />
+        <feBlend
+          mode="normal"
+          in2="BackgroundImageFix"
+          result="effect1_dropShadow_13386_13907"
+        />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_13386_13907"
+          result="shape"
+        />
+      </filter>
+      <linearGradient
+        id="paint0_linear_13386_13907"
+        x1={0}
+        y1={0}
+        x2={24}
+        y2={24}
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#6B67F9" />
+        <stop offset={1} stopColor="#4641F8" />
+      </linearGradient>
+      <linearGradient
+        id="paint1_linear_13386_13907"
+        x1={0}
+        y1={0}
+        x2={24}
+        y2={24}
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="white" stopOpacity="0.32" />
+        <stop offset={1} stopColor="white" stopOpacity={0} />
+      </linearGradient>
+      <clipPath id="clip0_13386_13907">
+        <rect width={16} height={16} fill="white" transform="translate(4 4)" />
+      </clipPath>
+    </defs>
+  </svg>
+);
+
 export const CustomIcon = {
   Logo,
   Steam,
@@ -316,4 +414,5 @@ export const CustomIcon = {
   ArrowLeft,
   TrustPilot2,
   Reload,
+  Swap,
 };
