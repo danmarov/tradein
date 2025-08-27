@@ -1,7 +1,7 @@
 // features/balance/providers/balance-provider.tsx
 "use client";
 import { createContext, useContext } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { BalanceData } from "../model";
 
 export const balanceQueryKeys = {
@@ -9,12 +9,29 @@ export const balanceQueryKeys = {
   current: () => [...balanceQueryKeys.all, "current"] as const,
 } as const;
 
+interface CreateInvoiceData {
+  amount: number;
+  payment_method: "card" | "crypto" | "paypal";
+  currency?: string;
+}
+
+interface DepositResponse {
+  id: string;
+  amount: number;
+  currency: string;
+  payment_url: string;
+  status: string;
+  created_at: string;
+}
+
 interface BalanceContextType {
   balance: BalanceData | null;
   isLoading: boolean;
   error: Error | null;
   refetchBalance: () => Promise<void>;
   invalidateBalance: () => Promise<void>;
+  createInvoice: (data: CreateInvoiceData) => Promise<DepositResponse>;
+  isCreatingInvoice: boolean;
 }
 
 const BalanceContext = createContext<BalanceContextType | undefined>(undefined);
@@ -36,6 +53,28 @@ async function fetchBalance(): Promise<BalanceData> {
   return response.json();
 }
 
+async function createDepositInvoice(
+  data: CreateInvoiceData,
+): Promise<DepositResponse> {
+  const response = await fetch("/api/balance/deposit", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    const errorData = await response
+      .json()
+      .catch(() => ({ error: "Unknown error" }));
+    throw new Error(errorData.error || "Failed to create invoice");
+  }
+
+  return response.json();
+}
+
 export function BalanceProvider({
   children,
   initialBalance,
@@ -51,9 +90,20 @@ export function BalanceProvider({
     queryKey: balanceQueryKeys.current(),
     queryFn: fetchBalance,
     initialData: initialBalance,
-    enabled: !!initialBalance, // запрашиваем только если есть изначальные данные
-    staleTime: 30 * 1000, // 30 секунд - баланс может меняться
+    enabled: !!initialBalance,
+    staleTime: 30 * 1000,
     retry: 2,
+    refetchOnWindowFocus: "always",
+  });
+
+  const createInvoiceMutation = useMutation({
+    mutationFn: createDepositInvoice,
+    onSuccess: () => {
+      // После успешного создания инвойса можно обновить баланс
+      queryClient.invalidateQueries({
+        queryKey: balanceQueryKeys.all,
+      });
+    },
   });
 
   const contextValue: BalanceContextType = {
@@ -68,6 +118,10 @@ export function BalanceProvider({
         queryKey: balanceQueryKeys.all,
       });
     },
+    createInvoice: async (data: CreateInvoiceData) => {
+      return createInvoiceMutation.mutateAsync(data);
+    },
+    isCreatingInvoice: createInvoiceMutation.isPending,
   };
 
   return (

@@ -9,11 +9,10 @@ import { Plus } from "lucide-react";
 import React from "react";
 import CountUp from "react-countup";
 export default function BalanceDisplay() {
-  const { balance, invalidateBalance } = useBalance();
+  const { balance } = useBalance();
   const modal = useModal();
 
   const handleBalanceClick = () => {
-    invalidateBalance();
     modal.toggleModal();
   };
   return (

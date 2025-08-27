@@ -37,7 +37,7 @@ export default function Home() {
     // <div className="container bg-red-500">Тут будет Лендинг</div>
     // </MainLayout>
     <>
-      <section className="container pt-[128px] pb-10">
+      <section className="container pb-10 pt-[128px]">
         <div className="flex justify-between">
           <div className="max-w-[650px] pt-8">
             <Link
@@ -66,9 +66,11 @@ export default function Home() {
                 </p>
               </div>
               <div className="flex items-center justify-between">
-                <Button className="h-[56px] w-[244px] rounded-[8px] text-lg">
-                  Trade Skins Now
-                </Button>
+                <Link href={"/p2p"}>
+                  <Button className="h-[56px] w-[244px] rounded-[8px] text-lg">
+                    Trade Skins Now
+                  </Button>
+                </Link>
                 <p className="ml-7 flex items-center gap-2 text-lg">
                   {/* <Gift size={20} /> */}
                   <CustomIcon.Awesome
@@ -82,7 +84,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex w-[576px] items-center justify-between select-none">
+          <div className="flex w-[576px] select-none items-center justify-between">
             <Image
               src="/images/landing-page/left.png"
               alt=""
@@ -129,17 +131,17 @@ export default function Home() {
           <div className="gradient absolute h-[350px] w-full -translate-y-2/3"></div>
           <div className="mx-auto w-fit text-center">
             <p className="text-2xl font-bold">61,608,799</p>
-            <p className="text-sm font-bold text-[#615dfc] uppercase">
+            <p className="text-sm font-bold uppercase text-[#615dfc]">
               TOTAL TRADES
             </p>
           </div>
         </div>
       </section>
-      <section className="container mt-[128px] mb-[64px] flex items-center gap-8">
+      <section className="container mb-[64px] mt-[128px] flex items-center gap-8">
         <div className="bg-card relative flex-1 rounded-lg py-12 pl-10 opacity-90 hover:opacity-100">
           <div className="h-[133px] w-fit max-w-[260px]">
             <p className="text-2xl font-semibold">Trusted by legends.</p>
-            <p className="text-muted mt-4 mb-3 font-medium">
+            <p className="text-muted mb-3 mt-4 font-medium">
               Trusted by esteemed pro players and major gaming brands.
             </p>
             <Image
@@ -150,7 +152,7 @@ export default function Home() {
             />
           </div>
           <Image
-            className="absolute right-0 bottom-0 rounded-br-lg"
+            className="absolute bottom-0 right-0 rounded-br-lg"
             src={"/images/landing-page/faceit-bg.png"}
             width={283}
             height={277}
@@ -176,7 +178,7 @@ export default function Home() {
             />
           </div>
           <Image
-            className="absolute right-0 bottom-0 rounded-br-lg"
+            className="absolute bottom-0 right-0 rounded-br-lg"
             src={"/images/landing-page/vitality-bg.png"}
             width={344}
             height={277}
@@ -199,7 +201,7 @@ export default function Home() {
               type="fas"
               className="text-3xl"
             />
-            <p className="mt-4 mb-2 text-2xl font-bold">Trade CS2 skins</p>
+            <p className="mb-2 mt-4 text-2xl font-bold">Trade CS2 skins</p>
             <p className="text-muted text-center text-base">
               Upgrade your skins to the latest collections easily and safely.
             </p>
@@ -211,7 +213,7 @@ export default function Home() {
               type="fas"
               className="text-3xl"
             />
-            <p className="mt-4 mb-2 text-2xl font-bold">Buy skins</p>
+            <p className="mb-2 mt-4 text-2xl font-bold">Buy skins</p>
             <p className="text-muted text-center text-base">
               Explore our CS2 marketplace for the best deals.
             </p>
@@ -223,7 +225,7 @@ export default function Home() {
               type="fas"
               className="text-3xl"
             />
-            <p className="mt-4 mb-2 text-2xl font-bold">Sell skins</p>
+            <p className="mb-2 mt-4 text-2xl font-bold">Sell skins</p>
             <p className="text-muted text-center text-base">
               Sell your skins quickly for instant cash or list them for sale.
             </p>
@@ -235,7 +237,7 @@ export default function Home() {
               type="fas"
               className="text-3xl"
             />
-            <p className="mt-4 mb-2 text-2xl font-bold">Free giveaways</p>
+            <p className="mb-2 mt-4 text-2xl font-bold">Free giveaways</p>
             <p className="text-muted text-center text-base">
               Join free giveaways to win exclusive CS2 skins.
             </p>
@@ -244,9 +246,9 @@ export default function Home() {
       </div>
 
       <div className="bg-[#121216]">
-        <div className="relative container my-[100px] flex h-[400px] items-center overflow-hidden rounded-lg bg-[#16161d] pl-[100px] opacity-90 hover:opacity-100">
+        <div className="container relative my-[100px] flex h-[400px] items-center overflow-hidden rounded-lg bg-[#16161d] pl-[100px] opacity-90 hover:opacity-100">
           <div
-            className="pointer-events-none absolute -top-[200px] -left-[200px] z-0 h-[600px] w-[600px]"
+            className="pointer-events-none absolute -left-[200px] -top-[200px] z-0 h-[600px] w-[600px]"
             style={{
               background:
                 "radial-gradient(circle at center, #3a35fb15 0%, #3a35fb00 85%)",
@@ -254,7 +256,7 @@ export default function Home() {
           />
 
           <div className="relative z-10 max-w-[336px]">
-            <p className="text-5xl leading-14">
+            <p className="leading-14 text-5xl">
               Get $5 bonus free on your first trade!
             </p>
             <Button className="mt-6 block h-[56px] text-lg">
@@ -262,7 +264,7 @@ export default function Home() {
             </Button>
           </div>
 
-          <div className="absolute top-0 right-0 h-full flex-1">
+          <div className="absolute right-0 top-0 h-full flex-1">
             <Image
               src={"/images/landing-page/first-bonus-right.png"}
               alt=""

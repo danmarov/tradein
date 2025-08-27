@@ -1,10 +1,10 @@
 // shared/ui/input/input.tsx
-import React, { forwardRef } from "react";
+import React, { forwardRef, ReactNode } from "react";
 import { cn } from "@/shared/lib/utils";
 
 export interface InputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix"> {
-  label?: string;
+  label?: string | ReactNode;
   error?: string;
   prefix?: React.ReactNode;
   suffix?: React.ReactNode;
@@ -56,8 +56,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           className={cn(
             "relative flex items-center overflow-hidden rounded-md border bg-white/5 transition-colors",
             hasError
-              ? "border-red-400 focus-within:border-red-400"
-              : "focus-within:border-primary border-white/10",
+              ? "border-red-400 focus-within:border-red-400 focus-within:bg-[#2a2a37]"
+              : "border-white/10 focus-within:border-transparent focus-within:bg-[#2a2a37]",
             disabled && "bg-white/2 cursor-not-allowed opacity-50",
             wrapperClassName,
           )}
