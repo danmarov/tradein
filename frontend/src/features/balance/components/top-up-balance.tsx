@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
+import { toast } from "sonner";
 
 import { useAuth } from "@/features/auth";
 import { CustomIcon } from "@/shared/ui/custom-icon";
@@ -398,6 +399,7 @@ export default function TopUpBalance({
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to create invoice:", error);
+      toast.error("Failed to create invoice");
       // Здесь можно показать toast с ошибкой
     }
   };
