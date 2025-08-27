@@ -440,9 +440,10 @@ export default function TopUpBalance({
       if (result.payment_url) {
         router.push(result.payment_url);
       }
-
-      setIsProcessing(false);
-      onOpenChange(false);
+      setTimeout(() => {
+        setIsProcessing(false);
+      }, 1500);
+      // onOpenChange(false);
     } catch (error) {
       console.error("Failed to create invoice:", error);
       toast.error("Failed to create invoice");
