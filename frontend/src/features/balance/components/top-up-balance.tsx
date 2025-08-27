@@ -522,7 +522,12 @@ export default function TopUpBalance({
                   ))}
                 </div>
                 <div className="relative mb-16 mt-8 aspect-[47/8]">
-                  <Image src={"/images/popup-topup.webp"} fill alt="banner" />
+                  <Image
+                    src={"/images/popup-topup.webp"}
+                    fill
+                    alt="banner"
+                    className="rounded-sm"
+                  />
                 </div>
               </motion.div>
             )}
