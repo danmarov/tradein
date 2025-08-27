@@ -20,6 +20,7 @@ import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { Input } from "@/shared/ui/input";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { useRouter } from "next/navigation";
 
 const paymentMethods = [
   {
@@ -247,11 +248,53 @@ const SelectedMethodView = ({
               ) : null}
             </p>
             <div className="mt-2 flex items-center text-2xl font-bold">
-              <span>{formatPrice(paymentAmount)}</span>
-              <ChevronsRight className="text-[#89eb5b]" />
-              <span className="text-[#89eb5b]">
+              <motion.span
+                initial={{ opacity: 0, x: -5 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{
+                  duration: 0.2,
+                  // delay: 0.3,
+                  ease: "easeOut",
+                }}
+              >
+                {formatPrice(paymentAmount)}
+              </motion.span>
+              <motion.span
+                initial={{ opacity: 0, x: -5, color: "#c8f7a3" }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+
+                  color: "#89eb5b",
+                }}
+                transition={{
+                  duration: 0.2,
+                  delay: 0.2,
+                  ease: "easeOut",
+                }}
+              >
+                <ChevronsRight className="text-[#89eb5b]" />
+              </motion.span>
+              <motion.span
+                initial={{
+                  opacity: 0,
+                  x: -5,
+                  color: "#c8f7a3",
+                }}
+                animate={{
+                  opacity: 1,
+                  x: 0,
+                  color: "#89eb5b",
+                }}
+                transition={{
+                  duration: 0.2,
+                  delay: 0.4,
+                  ease: "easeOut",
+                }}
+                className="text-[#89eb5b]"
+              >
                 {formatPrice(finalReceived)}
-              </span>
+              </motion.span>
             </div>
           </div>
         </div>
@@ -299,6 +342,8 @@ export default function TopUpBalance({
   onOpenChange,
 }: TopUpBalanceProps) {
   const { balance, createInvoice, isCreatingInvoice } = useBalance();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const router = useRouter();
   const [selectedMethod, setSelectedMethod] = useState<
     (typeof paymentMethods)[0] | null
   >(null);
@@ -379,7 +424,9 @@ export default function TopUpBalance({
   // };
   // Обработчик покупки
   const handlePurchase = async () => {
-    if (!selectedMethod || paymentAmount <= 0) return;
+    if (!selectedMethod || paymentAmount <= 0 || isProcessing) return;
+
+    setIsProcessing(true); // Включаем загрузку кнопки
 
     try {
       const result = await createInvoice({
@@ -390,17 +437,16 @@ export default function TopUpBalance({
 
       console.log("Invoice created:", result);
 
-      // Редирект на payment_url или показать в модалке
       if (result.payment_url) {
-        window.open(result.payment_url, "");
+        router.push(result.payment_url);
       }
 
-      // Закрыть модалку после успешного создания
+      setIsProcessing(false);
       onOpenChange(false);
     } catch (error) {
       console.error("Failed to create invoice:", error);
       toast.error("Failed to create invoice");
-      // Здесь можно показать toast с ошибкой
+      setIsProcessing(false);
     }
   };
   return (
@@ -497,7 +543,7 @@ export default function TopUpBalance({
               </Link>
             </p>
             <Button
-              loading={isCreatingInvoice}
+              loading={isProcessing || isCreatingInvoice}
               className={cn(
                 "ml-auto h-fit shrink-0",
                 selectedMethod &&
@@ -510,7 +556,9 @@ export default function TopUpBalance({
               disabled={
                 !selectedMethod ||
                 paymentAmount <= 0 ||
-                paymentAmount < (selectedMethod?.minAmount || 0)
+                paymentAmount < (selectedMethod?.minAmount || 0) ||
+                isCreatingInvoice ||
+                isProcessing
               }
             >
               <CustomIcon.Awesome name="lock" type="fas" className="scale-85" />

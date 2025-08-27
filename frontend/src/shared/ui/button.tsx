@@ -54,7 +54,7 @@ export function Button({
     >
       {loading ? (
         <>
-          <span className="opacity-0">
+          <span className="flex gap-2 opacity-0">
             {icon && <span className="flex-shrink-0">{icon}</span>}
             {children}
           </span>
